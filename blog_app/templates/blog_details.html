@@ -1,0 +1,98 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+<div class='px-36 py-6 pt-24'>
+    <div class='space-y-9'>
+        <div class='flex items-center justify-between pr-11'>
+            <div class='space-y-6 '>
+                <h1 class='text-6xl font-semibold'>{{blog.heading}}</h1>
+                <h1 class='text-5xl text-neutral-800'>{{blog.sub_heading}}</h1>
+            </div>
+            <div class='flex flex-col items-end w-1/4'>
+                <div class='flex items-center py-1 gap-2 cursor-pointer'>
+                    <img src={{blog.user.user_profile.profile_pic}} alt=""
+                        class='w-9 h-9 rounded-full object-cover' />
+                    <h1 class='text- rounded-full'>{{blog.user.user_profile.first_name}}
+                        {{blog.user.user_profile.last_name}}</h1>
+                </div>
+                <p class='text-sm font-semibold text-gray-600'>Published in {{blog.created_at}}</p>
+            </div>
+        </div>
+        <div class='text-lg flex gap-4 border-b border-t border-gray-100 py-1'>
+            <div class='flex items-center gap-1 cursor-pointer' onclick="">
+                {% if blog.is_liked %}
+                <i class="ri-thumb-up-fill"></i>
+                {%else%}
+                <i class="ri-thumb-up-line text-lg"></i>
+                {% endif %}
+                <p class='text-gray-600'>{{blog.like_count}}</p>
+            </div>
+            <div class='flex items-center gap-1 cursor-pointer' onclick="">
+                {% if blog.is_disliked %}
+                <i class="ri-thumb-down-fill"></i>
+                {% else %}
+                <i class="ri-thumb-down-line text-lg"></i>
+                {% endif %}
+                <p class='text-gray-600'>{{blog.unlike_count}}</p>
+            </div>
+            <div class='flex items-center gap-1 cursor-pointer'>
+                <i class="ri-chat-3-line text-lg"></i>
+                <p class='text-gray-600'>{{blog.comments_count}}</p>
+            </div>
+        </div>
+        <div class='space-y-5'>
+            <div class='w-full h-[35rem] flex justify-center overflow-hidden'>
+                <img src={{blog.image}} alt="" class='object-cover w-3/4' />
+            </div>
+            <p>{{blog.body}}</p>
+        </div>
+        <div class='px-3 space-y-2'>
+            <div class='flex gap-2 items-center text-neutral-600'>
+                <FaComments class='text-2xl' />
+                <h1 class='text-lg font-semibold'>All comments</h1>
+            </div>
+            <div class='rounded-lg flex'>
+                <div class=' w-full px- py-4 space-y-3'>
+                    <!-- {user&&
+                        <div class='bg-white rounded-lg py-6 px-4 shadow-lg space-y-2'>
+                            <div class='flex items-center gap-2'>
+                                <img src={user?.user_profile?.profile_pic} alt="" class='w-9 h-9 object-cover rounded-full'/>
+                                <h1 class='font-semibold'>{user?.user_profile?.first_name} {user?.user_profile?.last_name}</h1>
+                            </div>
+                            <textarea name="" id="" placeholder='What are your thoughts?' class='p-2 w-full outline-none bg-transparent rounded' value={comment} onChange={(e)=>setComment(e.target.value)}></textarea>
+                            <div class='w-full text-end'>
+                                <button class='py-1 px-4 bg-lime-600 rounded-full text-white font-semibold' onClick={handleSubmit}>Respond</button>
+                            </div>
+                        </div>
+                    } -->
+                    {% for comment in blog.comments %}
+                    <div class='space-y-6 py-4 px-9 '>
+                        <div class='space-y-4'>
+                            <div class='flex gap-3'>
+                                <img src={{comment.user.user_profile.profile_pic}} alt=""
+                                    class='w-11 h-11 object-cover rounded-full' />
+                                <div>
+                                    <h1 class='font-semibold'>{{comment.user.user_profile.first_name}}
+                                        {{comment.user.user_profile.last_name}}</h1>
+                                    <p class='text-sm text-gray-500 '>{{comment.created_at}}</p>
+                                </div>
+                            </div>
+                            <p class='font-medium px-14'>{{comment.comment}}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    function fetchBlogDetail(blogId) {
+        // Replace with the actual URL that handles the GET request
+        window.location.href = `/blog/${blogId}/`;
+    }
+</script>
+{% endblock scripts %}
