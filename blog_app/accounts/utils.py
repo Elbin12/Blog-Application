@@ -1,7 +1,8 @@
 import boto3
 from botocore.exceptions import ClientError
 from django.conf import settings
-
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.response import Response
 
 region_name = settings.AWS_S3_REGION_NAME
 bucket_name = settings.AWS_STORAGE_BUCKET_NAME
@@ -42,4 +43,29 @@ def create_presigned_url(object_name, expiration=3600):
         return None
 
     # The response contains the presigned URL
+    return response
+
+
+def token_generation_and_set_in_cookie(user):
+    from .serializers import UserSerializer
+    refresh = RefreshToken.for_user(user)
+    refresh["email"] = str(user.email)
+
+    serializer = UserSerializer(user)
+
+    response = Response(serializer.data, status=200)
+    response.set_cookie(
+            key = settings.SIMPLE_JWT['AUTH_COOKIE'],
+            value = str(refresh.access_token),
+            secure = settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+            httponly = settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+            samesite = settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+        )
+    response.set_cookie(
+        key = 'refresh_token',
+        value = str(refresh),
+        secure = settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+        httponly = settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],    
+        samesite = settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+    )
     return response

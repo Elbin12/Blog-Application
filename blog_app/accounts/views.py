@@ -10,7 +10,7 @@ from rest_framework import permissions
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import ValidationError
 import os
-from .utils import upload_fileobj_to_s3
+from .utils import upload_fileobj_to_s3, token_generation_and_set_in_cookie
 from datetime import datetime
 
 # Create your views here.
@@ -31,7 +31,6 @@ class SignupView(APIView):
 
 
 class SigninView(APIView):
-    authentication_classes = []
     permission_classes = [permissions.AllowAny]
     def post(self, request):
         email = request.data.get('email')
@@ -41,35 +40,23 @@ class SigninView(APIView):
             print(user, 'user')
             if not user.check_password(password):
                 return Response({'message': 'Invalid password'}, status=400)
-            
-            refresh = RefreshToken()
-            refresh['user_id'] = str(user.id)
-            refresh["email"] = str(user.email)
-            serializer = UserSerializer(user)
-            data = serializer.data
-            content = {
-                'access_token': str(refresh.access_token),
-                'refresh_token': str(refresh),
-                'userDetails' : data
-            }
-            return Response({'user_data':content}, status=200)
+            return token_generation_and_set_in_cookie(user)
         except CustomUser.DoesNotExist:
             return Response({'message':'User not found'}, status=404)
         
 class HomeView(APIView):
-    authentication_classes = []
-    permission_classes = []
+    permission_classes = [permissions.AllowAny]
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'home.html'
 
     def get(self, request):
+        print( request.user, 'user____')
         blogs = Blog.objects.all()
         serializer = BlogSerializer(blogs, many=True)
         return Response({'blogs':serializer.data})
 
 class BlogDetailsView(APIView):
-    authentication_classes = []
-    permission_classes = []
+    permission_classes = [permissions.AllowAny]
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'blog_details.html'
 
