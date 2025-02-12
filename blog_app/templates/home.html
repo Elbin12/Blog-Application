@@ -2,7 +2,7 @@
 <section class="px-56 py-9 pt-28">
     <div class="space-y-6">
         {% for blog in blogs %}
-        <a href="{% url 'blog_detail' blog.id %}" class="flex flex-col gap-3 w-3/4 border-b py-2 cursor-pointer">
+        <a href="{% url 'blog-detail' blog.id %}" class="flex flex-col gap-3 w-3/4 border-b py-2 cursor-pointer">
             <div class="flex justify-end w-full"></div>
             <div class="flex w-full gap-9 justify-between">
                 <div class="space-y-2">
@@ -47,3 +47,4 @@
     </div>
 </section>
 {% endblock content %}
+{% block scripts %}{% endblock scripts %}

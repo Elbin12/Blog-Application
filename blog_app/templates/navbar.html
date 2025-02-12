@@ -27,15 +27,26 @@
     </div>
   </div>
 
+  <div id="popup-menu" class="hidden fixed right-11 mt-16 z-20 w-60 bg-white border border-gray-200 rounded-lg shadow-lg py-2">
+    <div class="flex items-center px-4 py-3 hover:underline cursor-pointer transition-colors duration-200" onclick="navigateToProfile()">
+        <i class="ri-user-fill text-xl text-gray-600 mr-3"></i>
+        <span class="text-sm text-gray-700">Profile</span>
+    </div>
+    <div class="flex items-center px-4 py-3 hover:underline cursor-pointer transition-colors duration-200" onclick="signOut()">
+        <i class="ri-logout-box-line text-xl text-gray-600 mr-3"></i>
+        <span class="text-sm text-gray-700">Sign Out</span>
+    </div>
+</div>  
+
 <div class="bg-white shadow-md w-full z-10 h-20 flex justify-between items-center px-11 fixed">
     <a href="/home/" class="cursor-pointer font-semibold">BLOG APPLICATION</a>
     <div class="flex gap-4 items-center">
         {% if is_authenticated %}
-        <h1 class="font-semibold cursor-pointer hover:underline text-lg">Your Blogs</h1>
-        <button class="bg-stone-800 hover:bg-stone-900 text-white px-3 pr-6 py-2 rounded-full text-sm font-thin flex gap-2 items-center">
+        <a href="/blogs/" class="font-semibold cursor-pointer hover:underline text-lg">Your Blogs</a>
+        <a href="/blog/create/" class="bg-stone-800 hover:bg-stone-900 text-white px-3 pr-6 py-1 rounded-full text-sm font-thin flex gap-2 items-center">
             <i class="ri-add-circle-line text-2xl"></i> Create a blog
-        </button>
-        <i class="ri-account-circle-fill text-5xl cursor-pointer text-lime-700"></i>
+        </a>
+        <i class="ri-account-circle-fill text-5xl cursor-pointer text-lime-700" onclick="toggleProfilePopup()"></i>
         {% else %}
         <h1 class="font-semibold cursor-pointer hover:underline" onclick="showPopup()">Sign In</h1>
         <button class="bg-lime-700 hover:bg-lime-900 text-white px-6 py-2 rounded-full text-sm font-semibold">Get started</button>
@@ -45,7 +56,7 @@
 
 {% endblock navbar %} 
 
-{% block scripts %}
+{% block navscripts %}
     <script>
         function showPopup() {
             document.getElementById('signin-modal').classList.remove('hidden');
@@ -53,6 +64,13 @@
 
         function closePopup() {
             document.getElementById('signin-modal').classList.add('hidden');
+        }
+
+        function toggleProfilePopup() {
+            let popup = document.getElementById('popup-menu');
+            console.log(popup, 'lkfk');
+            
+            popup.classList.toggle('hidden');
         }
 
         function signinSubmit() {
@@ -82,4 +100,4 @@
             });
         }
     </script>
-{% endblock scripts %}
+{% endblock navscripts %}

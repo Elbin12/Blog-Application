@@ -15,25 +15,25 @@
                     <h1 class='text- rounded-full'>{{blog.user.user_profile.first_name}}
                         {{blog.user.user_profile.last_name}}</h1>
                 </div>
-                <p class='text-sm font-semibold text-gray-600'>Published in {{blog.created_at}}</p>
+                <p class='text-sm font-semibold text-gray-600'>Published in {{blog.created_at }}</p>
             </div>
         </div>
-        <div class='text-lg flex gap-4 border-b border-t border-gray-100 py-1'>
-            <div class='flex items-center gap-1 cursor-pointer' onclick="">
+        <div id="interactions" class='text-lg flex gap-4 border-b border-t border-gray-100 py-1' data-blog-id="{{ blog.id }}" data-liked="{{ blog.is_liked|lower }}" data-disliked="{{ blog.is_disliked|lower }}">
+            <div class='flex items-center gap-1 cursor-pointer'  onclick="handleLike(this)">
                 {% if blog.is_liked %}
-                <i class="ri-thumb-up-fill"></i>
+                <i id="like-icon" class="ri-thumb-up-fill text-lime-500"></i>
                 {%else%}
-                <i class="ri-thumb-up-line text-lg"></i>
+                <i id="like-icon" class="ri-thumb-up-line text-lime-500 text-lg"></i>
                 {% endif %}
-                <p class='text-gray-600'>{{blog.like_count}}</p>
+                <p id="like-count" class='text-gray-600'>{{blog.like_count}}</p>
             </div>
-            <div class='flex items-center gap-1 cursor-pointer' onclick="">
+            <div class='flex items-center gap-1 cursor-pointer' onclick="handleDislike(this)">
                 {% if blog.is_disliked %}
-                <i class="ri-thumb-down-fill"></i>
+                <i id="dislike-icon" class="ri-thumb-down-fill text-gray-400"></i>
                 {% else %}
-                <i class="ri-thumb-down-line text-lg"></i>
+                <i id="dislike-icon" class="ri-thumb-down-line text-gray-400 text-lg"></i>
                 {% endif %}
-                <p class='text-gray-600'>{{blog.unlike_count}}</p>
+                <p id="dislike-count" class='text-gray-600'>{{blog.unlike_count}}</p>
             </div>
             <div class='flex items-center gap-1 cursor-pointer'>
                 <i class="ri-chat-3-line text-lg"></i>
@@ -53,18 +53,22 @@
             </div>
             <div class='rounded-lg flex'>
                 <div class=' w-full px- py-4 space-y-3'>
-                    <!-- {user&&
+                    {% if is_authenticated %}
                         <div class='bg-white rounded-lg py-6 px-4 shadow-lg space-y-2'>
                             <div class='flex items-center gap-2'>
-                                <img src={user?.user_profile?.profile_pic} alt="" class='w-9 h-9 object-cover rounded-full'/>
-                                <h1 class='font-semibold'>{user?.user_profile?.first_name} {user?.user_profile?.last_name}</h1>
+                                <img src={{user.user_profile.profile_pic}} alt="" class='w-9 h-9 object-cover rounded-full'/>
+                                <h1 class='font-semibold'>{{user.user_profile.first_name}} {{user.user_profile.last_name}}</h1>
                             </div>
-                            <textarea name="" id="" placeholder='What are your thoughts?' class='p-2 w-full outline-none bg-transparent rounded' value={comment} onChange={(e)=>setComment(e.target.value)}></textarea>
-                            <div class='w-full text-end'>
-                                <button class='py-1 px-4 bg-lime-600 rounded-full text-white font-semibold' onClick={handleSubmit}>Respond</button>
-                            </div>
+                            <form method="POST" action="{% url 'comment-create' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="blog_id" value="{{ blog.id }}">
+                                <textarea name="comment" id="" placeholder='What are your thoughts?' class='p-2 w-full outline-none bg-transparent rounded' ></textarea>
+                                <div class='w-full text-end'>
+                                    <button type="submit" class='py-1 px-4 bg-lime-600 rounded-full text-white font-semibold' onClick={handleSubmit}>Respond</button>
+                                </div>
+                            </form>
                         </div>
-                    } -->
+                    {% endif %}
                     {% for comment in blog.comments %}
                     <div class='space-y-6 py-4 px-9 '>
                         <div class='space-y-4'>
@@ -74,7 +78,7 @@
                                 <div>
                                     <h1 class='font-semibold'>{{comment.user.user_profile.first_name}}
                                         {{comment.user.user_profile.last_name}}</h1>
-                                    <p class='text-sm text-gray-500 '>{{comment.created_at}}</p>
+                                    <p class='text-sm text-gray-500 '>{{comment.time_ago}}</p>
                                 </div>
                             </div>
                             <p class='font-medium px-14'>{{comment.comment}}</p>
@@ -90,9 +94,120 @@
 
 {% block scripts %}
 <script>
-    function fetchBlogDetail(blogId) {
-        // Replace with the actual URL that handles the GET request
-        window.location.href = `/blog/${blogId}/`;
+    // function fetchBlogDetail(blogId) {
+    //     // Replace with the actual URL that handles the GET request
+    //     window.location.href = `/blog/${blogId}/`;
+    // }
+
+    const handleLike = (element)=>{
+        const interactions = element.closest('#interactions')
+        const blogId = interactions.dataset.blogId;
+        const isLiked = interactions.dataset.liked === "true";
+        const isDisliked = interactions.dataset.disliked === "true";
+
+        console.log(blogId, isLiked, isDisliked, 'interactionsss');
+        
+        const data = {
+            'blog_id' : blogId,
+            'is_liked': isLiked? false : true,
+            'is_disliked':isDisliked===null?false:isDisliked&& false,
+        }
+        console.log(data, 'lloo data')
+
+        fetch('/blog/interactions/', {
+            method:'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            console.log(response, 'res')
+            
+            if (!response.ok) {
+                return response.json().then(err => { throw err; });
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('like-count').textContent = data.like_count;
+            document.getElementById('dislike-count').textContent = data.unlike_count;
+
+            const icon = element.querySelector('#like-icon');
+            const dis_icon = element.closest('#interactions').querySelector('#dislike-icon');
+
+            const interactions = element.closest('#interactions')
+
+            console.log(dis_icon, 'dis', icon);
+            
+
+        if (data.is_liked) {
+            icon.classList.remove('ri-thumb-up-line');
+            icon.classList.add('ri-thumb-up-fill');
+        }else {
+            icon.classList.remove('ri-thumb-up-fill');  
+            icon.classList.add('ri-thumb-up-line');       
+        }
+        dis_icon.classList.add('ri-thumb-down-line');  
+        dis_icon.classList.remove('ri-thumb-down-fill');  
+        interactions.dataset.liked = data.is_liked;
+        interactions.dataset.disliked = data.is_disliked;
+        })
+        .catch(error => {
+            console.error('Error:', error)
+            alert(error.message)
+        });
+    }
+
+    const handleDislike = (element)=>{
+        const interactions = element.closest('#interactions')
+
+        const blogId = interactions.dataset.blogId;
+        const isLiked = interactions.dataset.liked === "true";
+        const isDisliked = interactions.dataset.disliked === "true";
+        const data = {
+            'blog_id' : blogId,
+            'is_liked': isLiked===null?false:isLiked&& false,
+            'is_disliked':isDisliked? false:true,
+        }
+
+        fetch('/blog/interactions/', {
+            method:'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw err; });
+            }
+            return response.json()
+        })
+        .then(data => {
+            console.log(data, 'data')
+            document.getElementById('dislike-count').textContent = data.unlike_count;
+            document.getElementById('like-count').textContent = data.like_count;
+            const icon = element.querySelector('#dislike-icon');
+            const like_icon = element.closest('#interactions').querySelector('#like-icon');
+            const interactions = element.closest('#interactions')
+
+            if (data.is_disliked) {
+                icon.classList.remove('ri-thumb-down-line');
+                icon.classList.add('ri-thumb-down-fill');
+            }else {
+                icon.classList.remove('ri-thumb-down-fill');  
+                icon.classList.add('ri-thumb-down-line');
+            }
+            like_icon.classList.add('ri-thumb-up-line');  
+            like_icon.classList.remove('ri-thumb-up-fill');
+            interactions.dataset.liked = data.is_liked;
+            interactions.dataset.disliked = data.is_disliked;
+        })
+        .catch(error => {
+            console.error('Error:', error)
+            alert(error.message)
+        });
     }
 </script>
 {% endblock scripts %}

@@ -6,11 +6,36 @@
     <title>Blog App</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 <body>
     {% block navbar %}{% endblock navbar %}
     {% block content %}{% endblock content %}
 
+    {% block navscripts %}{% endblock navscripts %}
     {% block scripts %}{% endblock scripts %}
+    <script>
+        function showToast(message, type = "success") {
+          Toastify({
+            text: message,
+            duration: 3000, 
+            gravity: "top",
+            position: "right", 
+            backgroundColor: type === "success" ? "green" : "red",
+            style:{
+                borderRadius: "8px",
+                boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)"
+            }
+          }).showToast();
+        }
+      </script>
+      {% if messages %}
+      <script>
+        {% for message in messages %}
+          showToast("{{ message }}", "{{ message.tags }}");
+        {% endfor %}
+      </script>
+    {% endif %}
 </body>
 </html>

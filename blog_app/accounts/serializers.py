@@ -1,8 +1,9 @@
-from rest_framework.serializers import ModelSerializer, ValidationError, FileField, SerializerMethodField
+from rest_framework.serializers import ModelSerializer, ValidationError, FileField, SerializerMethodField, DateTimeField
 from .models import CustomUser, UserProfile, Blog, Comments, Interactions
 import os
 from datetime import datetime
 from .utils import create_presigned_url, upload_fileobj_to_s3
+from django.utils.timesince import timesince
 
 
 class SignupSerializer(ModelSerializer):
@@ -66,10 +67,15 @@ class UserSerializer(ModelSerializer):
 
 class CommentsSerializer(ModelSerializer):
     user = UserSerializer(read_only=True)
+    created_at = DateTimeField(format="%b %d, %Y %I:%M %p")
+    time_ago = SerializerMethodField()
     class Meta:
         model = Comments
-        fields = ['id', 'comment', 'created_at', 'user']
+        fields = ['id', 'comment', 'created_at', 'user', 'time_ago']
         read_only_fields = ['blog', 'user']
+
+    def get_time_ago(self, obj):
+        return timesince(obj.created_at) + " ago"
 
 class BlogSerializer(ModelSerializer):
     image = SerializerMethodField()
@@ -80,10 +86,11 @@ class BlogSerializer(ModelSerializer):
     is_disliked = SerializerMethodField()
     like_count = SerializerMethodField()
     unlike_count = SerializerMethodField()
+    created_at = DateTimeField(format="%b %d, %Y", read_only=True)
     class Meta:
         model = Blog
         fields = ['id', 'user', 'heading', 'sub_heading', 'body', 'image', 'like_count', 'unlike_count', 'created_at', 'updated_at', 'user', 'comments', 'comments_count', 'is_liked', 'is_disliked', 'is_available']
-        read_only_fields = ['user', 'like_count', 'unlike_count', 'created_at', 'updated_at', 'image', 'comments']
+        read_only_fields = ['user', 'like_count', 'unlike_count', 'created_at', 'updated_at', 'image', 'comments',]
 
     def get_like_count(self, obj):
         return Interactions.objects.filter(blog=obj, is_liked=True).count()
