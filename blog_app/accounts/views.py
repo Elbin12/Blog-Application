@@ -187,3 +187,21 @@ class EditBlog(APIView):
                     messages.error(request, f"{field}: {error}")
 
             return redirect('edit-blog', id=blog.id)
+        
+class Logout(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.COOKIES.get("refresh_token")
+            print(refresh_token, 'resfreesh')
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            response = Response(status=200)
+            response.delete_cookie('refresh_token')
+            response.delete_cookie('access_token')
+            response.delete_cookie('csrftoken')
+            return response
+        except Exception as e:
+            print(e, 'ee')
+            return Response(status=400)
