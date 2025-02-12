@@ -19,17 +19,20 @@ from django.contrib import messages
 
 
 class SignupView(APIView):
-    authentication_classes = []
     permission_classes = [permissions.AllowAny]
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'profile_list.html'
+    template_name = 'home.html'
 
     def post(self, request):
         serializer = SignupSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'data':'user created successfully.'})
-        return Response({'form': serializer, 'errors': serializer.errors})
+            messages.success(request, 'Signup successfully.')
+        else:
+            for field, errors in serializer.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+        return redirect('home')
 
 
 class SigninView(APIView):

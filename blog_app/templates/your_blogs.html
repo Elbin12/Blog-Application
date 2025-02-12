@@ -79,15 +79,5 @@
         var popup = document.getElementById("popup-" + blogId);
         popup.classList.toggle("hidden");
     }
-
-    // Close popup when clicking outside
-    document.addEventListener("click", function(event) {
-        const popups = document.querySelectorAll("[id^='popup-']");
-        popups.forEach(popup => {
-            if (!popup.contains(event.target) && !event.target.classList.contains("ri-more-fill")) {
-                popup.classList.add("hidden");
-            }
-        });
-    });
 </script>
 {% endblock scripts %}
