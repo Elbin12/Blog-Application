@@ -59,10 +59,14 @@ class UserProfileSerializer(ModelSerializer):
         return super().update(instance, validated_data)
 
 class UserSerializer(ModelSerializer):
-    user_profile = UserProfileSerializer()
+    user_profile = SerializerMethodField()
     class Meta:
         model = CustomUser
         fields = ['id', 'email', 'is_active', 'date_joined', 'user_profile', 'is_superuser']
+
+    def get_user_profile(self, obj):
+        user_profile = getattr(obj, 'user_profile', None)
+        return UserProfileSerializer(user_profile).data if user_profile else None
 
 
 class CommentsSerializer(ModelSerializer):

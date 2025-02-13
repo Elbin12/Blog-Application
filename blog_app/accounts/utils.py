@@ -2,7 +2,7 @@ import boto3
 from botocore.exceptions import ClientError
 from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.response import Response
+from django.http import HttpResponseRedirect
 
 region_name = settings.AWS_S3_REGION_NAME
 bucket_name = settings.AWS_STORAGE_BUCKET_NAME
@@ -47,13 +47,13 @@ def create_presigned_url(object_name, expiration=3600):
 
 
 def token_generation_and_set_in_cookie(user):
-    from .serializers import UserSerializer
     refresh = RefreshToken.for_user(user)
     refresh["email"] = str(user.email)
 
-    serializer = UserSerializer(user)
-
-    response = Response(serializer.data, status=200)
+    if user.is_superuser:
+        response = HttpResponseRedirect('/admin/home/')
+    else:
+        response = HttpResponseRedirect('/home/')
     response.set_cookie(
             key = settings.SIMPLE_JWT['AUTH_COOKIE'],
             value = str(refresh.access_token),

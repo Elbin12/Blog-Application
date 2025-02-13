@@ -1,0 +1,41 @@
+{% extends 'admin/navbar.html' %}
+
+{% block content %}
+
+
+<div class='px-28 pt-24'>
+    <div class='flex gap-9'>
+      <div class='w-full border-neutral-400'>
+        <h1 class='text-4xl mb-9'>Users</h1>
+        <div class='grid grid-cols-3 gap-4 px-2 pr-5'>
+            {% for user in users %}
+                <a href="{% url 'user_detail' user.id %}" class='shadow-xl bg-white rounded flex items-center justify-between gap-2 cursor-pointer'>
+                  <div class='flex gap-2 pl-6 py-5'>
+                    <div class='w-20 h-20 rounded-full overflow-hidden'>
+                      <img src={{user.user_profile.profile_pic}} alt="" class='w-full h-full object-cover'/>
+                    </div>
+                    <div class=''>
+                        {% if user.user_profile %}
+                            <h1 class='text-xl font-thin'>{{user.user_profile.first_name}} {{user.user_profile.last_name}}</h1>
+                        {% else %}
+                            <h1 class='text-xl font-thin'>No Profile</h1>
+                        {% endif %}
+                      <h1 class='font-semibold text-stone-600'>{{user.email}}</h1>
+                    </div>
+                  </div>
+                  <div class='bg-lime-700 hover:bg-lime-900 h-full px-1 flex items-center cursor-pointer'>
+                    <i class="ri-arrow-right-s-fill text-white text-xl hover:text-lime-50"></i>
+                  </div>
+                </a>
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+{% endblock content %} 
+
+{% block scripts %}
+    
+{% endblock scripts %}

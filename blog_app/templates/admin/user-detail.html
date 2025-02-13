@@ -1,0 +1,94 @@
+{% extends 'admin/navbar.html' %}
+
+{% block content %}
+
+<div class='px-28 pt-28 space-y-5'>
+    <div class='space-y-5'>
+        <h1 class='text-4xl text-neutral-700'>Profile of {{user.user_profile.first_name}}</h1>
+        <div class='px-4 flex w-full gap-4'>
+            <div class='w-1/2 border-r'>
+                <div class='w-20 h-20 rounded-full overflow-hidden'>
+                    <img src={{user.user_profile.profile_pic}} alt="" class='w-full h-full object-cover' />
+                </div>
+                <div class=''>
+                    {% if user.user_profile %}
+                    <h1 class='text-xl font-thin'>{{user.user_profile.first_name}} {{user.user_profile.last_name}}</h1>
+                    {% else %}
+                    <h1 class='text-xl font-thin'>No Profile</h1>
+                    {% endif %}
+                    <h1 class='font-semibold text-stone-600'>{{user.email}}</h1>
+                </div>
+            </div>
+            <div class='pt-2 space-y-4'>
+                <div class='flex gap-3'>
+                    <h1>Status :</h1>
+                    {% if user.is_active %}
+                    <p class='font-bold text-lime-500'>Active</p>
+                    {% else %}
+                    <p class='font-bold text-gray-500'>Inactive</p>
+                    {% endif %}
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    {% if user.is_active %}
+                    <button type="submit" class='px-6 py-1 bg-lime-50 shadow-md rounded font-semibold'>Block</button>
+                    {% else %}
+                    <button type="submit" class='px-6 py-1 bg-lime-50 shadow-md rounded font-semibold'>UnBlock</button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class='space-y-2'>
+        <h1 class='text-lg font-semibold'>Blogs</h1>
+        <div class='space-y-5'>
+            {% for blog in user.user_blog %}
+            <div key={index} class='bg-lime-50 px-4 py-3 flex gap-2 items-center cursor-pointer shadow-lg'>
+                <div class='w-11 h-11 rounded-full overflow-hidden'>
+                    <img src={{blog.image}} alt="" class='w-full h-full object-cover' />
+                </div>
+                <div class='space-y-0.5'>
+                    <div>
+                        {% if blog.heading|length > 40 %}
+                        <h1 class='text-sm font-bold'>{{ blog.heading|slice:":40" }}...</h1>
+                        {% else %}
+                        <h1 class='text-sm font-bold'>{{blog.heading}}</h1>
+                        {% endif %}
+
+                        {% if blog.sub_heading|length > 30 %}
+                        <h1 class='text-xs font-semibold text-gray-800'>{{ blog.sub_heading|slice:":30" }}...</h1>
+                        {% else %}
+                        <h1 class='text-xs font-semibold text-gray-800'>{{blog.sub_heading}}</h1>
+                        {% endif %}
+                    </div>
+                    {% if blog.body|length > 120 %}
+                    <p class='text-[12px]'>{{blog.body|slice:"120"}}...</p>
+                    {% else %}
+                    <p class='text-[12px]'>{{blog.body}}</p>
+                    {% endif %}
+                    <div class='flex gap-2'>
+                        <div class='flex items-center gap-1 text-xs'>
+                            <i class="ri-thumb-up-line text-sm"></i>
+                            <p class='text-gray-600'>{{blog.like_count}}</p>
+                        </div>
+                        <div class='flex items-center gap-1 text-xs'>
+                            <i class="ri-thumb-down-line text-sm"></i>
+                            <p class='text-gray-600'>{{blog.unlike_count}}</p>
+                        </div>
+                        <div class='flex items-center gap-1 text-xs cursor-pointer'>
+                            <i class="ri-chat-3-line text-sm"></i>
+                            <p class='text-gray-600'>{{blog.comments_count}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+
+{% endblock scripts %}
