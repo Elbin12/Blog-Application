@@ -14,5 +14,6 @@ urlpatterns = [
     path('blog/edit/<int:id>/', views.EditBlog.as_view(), name='edit-blog'),
     path('logout/', views.Logout.as_view(), name='logout'),
     path('profile/', views.ProfileView.as_view(), name='profile'),
+    path('profile-image/', views.ProfilePicUpdate.as_view(), name='profile_pic'),
 ]
     

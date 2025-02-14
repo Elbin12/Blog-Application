@@ -219,8 +219,8 @@ class ProfileView(APIView):
         first_name = request.data.get('first_name')
         last_name = request.data.get('last_name')
 
-        if not first_name or not last_name:
-            messages.error(request, 'fill both first and last names.')
+        if not first_name:
+            messages.error(request, 'Please fill first name.')
             return redirect('profile')
         
         profile, created = UserProfile.objects.get_or_create(user=request.user)
@@ -229,4 +229,20 @@ class ProfileView(APIView):
         profile.save()
 
         messages.success(request, 'Profile updated successfully.')
+        return redirect('profile')
+
+class ProfilePicUpdate(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        print(request.data, 'data')
+        profile, created = UserProfile.objects.get_or_create(user=request.user)
+        serializer = UserProfileSerializer(profile, data=request.data, partial=True, context={'request':request})
+
+        if serializer.is_valid():
+            serializer.save()
+            messages.success(request, 'Profile image updated successfully.')
+            return redirect('profile')
+        
+        messages.error(request, serializer.errors)
         return redirect('profile')

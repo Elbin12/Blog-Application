@@ -2,6 +2,10 @@
 {% block content %}
 
 
+<div id="save-button" class='fixed hidden bg-lime-800 cursor-pointer bottom-0 w-full text-center py-2 mb-1' onclick="submit()">
+    <button type="button" class='text-white text-lg'>Save</button>
+</div>
+
 <div id="profile-popup" class='fixed hidden inset-0 z-20 flex justify-center h-screen w-full'>
     <form method="post" class='w-[25rem] h-full bg-lime-900 bg-opacity-60 p-2'>
       <div class="flex justify-end">
@@ -14,11 +18,11 @@
           <div class='px-4 space-y-9'>
             <div class='flex gap-6'>
                 <label class='text-white font-thin'>First Name</label>
-                <input name="first_name" value="{{user.first_name}}" type="text" class='bg-transparent border-b text-white focus:border-lime-400 outline-none px-3'/>
+                <input name="first_name" value="{{user.user_profile.first_name}}" type="text" class='bg-transparent border-b text-white focus:border-lime-400 outline-none px-3'/>
             </div>
             <div class='flex gap-6'>
                 <label class='text-white font-thin'>Last Name</label>
-                <input name="last_name" value="{{user.last_name}}" type="text" class='bg-transparent border-b text-white focus:border-lime-400 outline-none px-3'/>
+                <input name="last_name" value="{{user.user_profile.last_name}}" type="text" class='bg-transparent border-b text-white focus:border-lime-400 outline-none px-3'/>
             </div>
           </div>
       </div>
@@ -30,19 +34,24 @@
 
 <div class='h-screen bg-stone-100 pt-28'>
     <div class='p-24 flex gap-4 items-center'>
-        <div class='bg-white w-36 h-36 rounded-full flex justify-center items-center'>
-            <input type="file" class='hidden' ref={inputRef} onChange={handleImg} />
+        <form action="{% url 'profile_pic' %}" enctype="multipart/form-data" method="post" id="image-submit" class='bg-white w-36 h-36 rounded-full flex justify-center items-center'>
+            {% csrf_token %}
+            <input id="img" type="file" name="profile_pic" class='hidden' onchange="previewImage(event)"/>
             {% if user.user_profile.profile_pic %}
-                <img src={{user.user_profile.profile_pic}} alt="" class='w-full h-full object-cover rounded-full' />
-                <div class='fixed text-3xl opacity-0 rounded-full w-36 flex items-center justify-center h-36 bg-black bg-opacity-50 text-white hover:opacity-100 transition-opacity duration-300 cursor-pointer'>
-                    
-                </div>
-            {% else %}
-            <div class='flex flex-col items-center cursor-pointer'>
-                <CiCamera class='text-4xl text-stone-700' />
+            <img id="profile-pic-preview" src={{user.user_profile.profile_pic}} alt="" class='w-full h-full object-cover rounded-full' />
+            <div class='fixed text-3xl opacity-0 rounded-full w-36 flex items-center justify-center h-36 bg-black bg-opacity-50 text-white hover:opacity-100 transition-opacity duration-300 cursor-pointer' onclick="openImageInput()">
+                <i class="ri-pencil-line"></i>
             </div>
+            {% else %}
+                <div id="edit-icon" class='fixed hidden text-3xl opacity-0 rounded-full w-36 flex items-center justify-center h-36 bg-black bg-opacity-50 text-white hover:opacity-100 transition-opacity duration-300 cursor-pointer' onclick="openImageInput()">
+                    <i class="ri-pencil-line"></i>
+                </div>
+                <img id="profile-pic-preview" src="" alt="Profile Picture" class='w-full h-full object-cover rounded-full hidden' />
+                <div class='flex flex-col items-center cursor-pointer' onclick="openImageInput()">
+                    <i id="cam-icon" class="ri-camera-fill text-4xl text-stone-700"></i>
+                </div>
             {% endif %}
-        </div>
+        </form>
         <div>
             {% if user.user_profile.first_name %}
                 <h1 class='text-5xl'>{{user.user_profile.first_name}} {{user.user_profile.last_name}}</h1>
@@ -60,6 +69,41 @@
 {% block scripts %}
 
 <script>
+
+    function submit(){
+        const element = document.getElementById('image-submit')
+        element.submit()
+    }
+
+    function openImageInput(){
+        element = document.getElementById('img')
+        element.click()
+    }
+
+    function handleImageSubmit(e){
+        e.preventDefault()
+    }
+
+    function previewImage(event) {
+    const save_element = document.getElementById('save-button')
+    const file = event.target.files[0];  // Get the selected file
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imgElement = document.getElementById("profile-pic-preview");
+            const edit_icon = document.getElementById("edit-icon");
+            const cam_icon = document.getElementById("cam-icon");
+            imgElement.src = e.target.result;  // Set image source to selected file
+            imgElement.classList.remove("hidden"); // Show image if hidden
+            edit_icon.classList.remove("hidden");
+            cam_icon.classList.add("hidden");
+        };
+        reader.readAsDataURL(file);  // Convert file to Data URL
+    }
+    save_element.classList.remove('hidden')
+}
+
+
     function openProfilePopup(){
         element = document.getElementById('profile-popup')
         element.classList.remove('hidden')
