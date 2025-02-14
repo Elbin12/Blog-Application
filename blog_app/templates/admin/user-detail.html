@@ -43,45 +43,57 @@
         <h1 class='text-lg font-semibold'>Blogs</h1>
         <div class='space-y-5'>
             {% for blog in user.user_blog %}
-            <div key={index} class='bg-lime-50 px-4 py-3 flex gap-2 items-center cursor-pointer shadow-lg'>
-                <div class='w-11 h-11 rounded-full overflow-hidden'>
-                    <img src={{blog.image}} alt="" class='w-full h-full object-cover' />
-                </div>
-                <div class='space-y-0.5'>
-                    <div>
-                        {% if blog.heading|length > 40 %}
-                        <h1 class='text-sm font-bold'>{{ blog.heading|slice:":40" }}...</h1>
-                        {% else %}
-                        <h1 class='text-sm font-bold'>{{blog.heading}}</h1>
-                        {% endif %}
-
-                        {% if blog.sub_heading|length > 30 %}
-                        <h1 class='text-xs font-semibold text-gray-800'>{{ blog.sub_heading|slice:":30" }}...</h1>
-                        {% else %}
-                        <h1 class='text-xs font-semibold text-gray-800'>{{blog.sub_heading}}</h1>
-                        {% endif %}
+            <a href="{% url 'blog_details' blog.id %}" class='bg-lime-50 px-4 py-3 flex gap-2 items-center justify-between cursor-pointer shadow-lg'>
+                <div class="flex  gap-4 items-center">
+                    <div class='w-14 h-14 rounded-full overflow-hidden'>
+                        <img src={{blog.image}} alt="" class='w-full h-full object-cover' />
                     </div>
-                    {% if blog.body|length > 120 %}
-                    <p class='text-[12px]'>{{blog.body|slice:"120"}}...</p>
+                    <div class='space-y-0.5'>
+                        <div>
+                            {% if blog.heading|length > 40 %}
+                            <h1 class='text-sm font-bold'>{{ blog.heading|slice:":40" }}...</h1>
+                            {% else %}
+                            <h1 class='text-sm font-bold'>{{blog.heading}}</h1>
+                            {% endif %}
+    
+                            {% if blog.sub_heading|length > 30 %}
+                            <h1 class='text-xs font-semibold text-gray-800'>{{ blog.sub_heading|slice:":30" }}...</h1>
+                            {% else %}
+                            <h1 class='text-xs font-semibold text-gray-800'>{{blog.sub_heading}}</h1>
+                            {% endif %}
+                        </div>
+                        {% if blog.body|length > 120 %}
+                        <p class='text-[12px]'>{{blog.body|slice:"120"}}...</p>
+                        {% else %}
+                        <p class='text-[12px]'>{{blog.body}}</p>
+                        {% endif %}
+                        <div class='flex gap-2'>
+                            <div class='flex items-center gap-1 text-xs'>
+                                <i class="ri-thumb-up-line text-sm"></i>
+                                <p class='text-gray-600'>{{blog.like_count}}</p>
+                            </div>
+                            <div class='flex items-center gap-1 text-xs'>
+                                <i class="ri-thumb-down-line text-sm"></i>
+                                <p class='text-gray-600'>{{blog.unlike_count}}</p>
+                            </div>
+                            <div class='flex items-center gap-1 text-xs cursor-pointer'>
+                                <i class="ri-chat-3-line text-sm"></i>
+                                <p class='text-gray-600'>{{blog.comments_count}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form action="{% url 'blog_details' blog.id %}" method="post" class="border px-4 py-1 font-bold rounded border-black hover:bg-gray-100">
+                    {% if blog.is_active %}
+                        <i class="ri-prohibited-2-line text-red-400"></i>
+                        <button class="text-red-400">Block</button>
                     {% else %}
-                    <p class='text-[12px]'>{{blog.body}}</p>
+                        <i class="ri-prohibited-2-line"></i>
+                        <button class="">UnBlock</button>
                     {% endif %}
-                    <div class='flex gap-2'>
-                        <div class='flex items-center gap-1 text-xs'>
-                            <i class="ri-thumb-up-line text-sm"></i>
-                            <p class='text-gray-600'>{{blog.like_count}}</p>
-                        </div>
-                        <div class='flex items-center gap-1 text-xs'>
-                            <i class="ri-thumb-down-line text-sm"></i>
-                            <p class='text-gray-600'>{{blog.unlike_count}}</p>
-                        </div>
-                        <div class='flex items-center gap-1 text-xs cursor-pointer'>
-                            <i class="ri-chat-3-line text-sm"></i>
-                            <p class='text-gray-600'>{{blog.comments_count}}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    
+                </form>
+            </a>
             {% endfor %}
         </div>
     </div>

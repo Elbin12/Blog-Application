@@ -18,7 +18,7 @@ class UsersProfileSerializer(ModelSerializer):
         return None
 
 class UserDetailsSerializer(ModelSerializer):
-    user_blog = BlogSerializer(many=True)
+    user_blog = SerializerMethodField()
     blog_count = SerializerMethodField()
     user_profile = UsersProfileSerializer()
     class Meta:
@@ -27,3 +27,7 @@ class UserDetailsSerializer(ModelSerializer):
     
     def get_blog_count(self, obj):
         return obj.user_blog.count()
+    
+    def get_user_blog(self, obj):
+        blogs = obj.user_blog.all().order_by('-created_at')
+        return BlogSerializer(blogs, many=True).data

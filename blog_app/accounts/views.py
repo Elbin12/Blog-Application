@@ -56,7 +56,7 @@ class HomeView(APIView):
 
     def get(self, request):
         print( request.user, 'user____')
-        blogs = Blog.objects.all()
+        blogs = Blog.objects.filter(is_available=True)
         serializer = BlogSerializer(blogs, many=True)
         return Response({'blogs':serializer.data})
 
@@ -205,3 +205,28 @@ class Logout(APIView):
         except Exception as e:
             print(e, 'ee')
             return Response(status=400)
+        
+class ProfileView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'profile_page.html'
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+    
+    def post(self, request):
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
+
+        if not first_name or not last_name:
+            messages.error(request, 'fill both first and last names.')
+            return redirect('profile')
+        
+        profile, created = UserProfile.objects.get_or_create(user=request.user)
+        profile.first_name = first_name
+        profile.last_name = last_name
+        profile.save()
+
+        messages.success(request, 'Profile updated successfully.')
+        return redirect('profile')

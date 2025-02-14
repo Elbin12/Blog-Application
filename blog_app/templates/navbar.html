@@ -55,16 +55,16 @@
     </div>
   </div>
 
-  <form action="{% url 'logout' %}" method="POST" onsubmit="handleLogout(event)" id="popup-menu" class="hidden fixed right-11 mt-16 z-30 w-60 bg-white border border-gray-200 rounded-lg shadow-lg py-2">
-    <div class="flex items-center px-4 py-3 hover:underline cursor-pointer transition-colors duration-200" onclick="navigateToProfile()">
+  <div id="popup-menu"  class="hidden fixed right-11 mt-16 z-30 w-60 bg-white border border-gray-200 rounded-lg shadow-lg py-2">
+    <a href="{% url 'profile' %}" class="flex items-center px-4 py-3 hover:underline cursor-pointer transition-colors duration-200">
         <i class="ri-user-fill text-xl text-gray-600 mr-3"></i>
         <span class="text-sm text-gray-700">Profile</span>
-    </div>
-    <div class="flex items-center px-4 py-3 hover:underline cursor-pointer transition-colors duration-200">
+    </a>
+    <form action="{% url 'logout' %}" method="POST" onsubmit="handleLogout(event)" class="flex items-center px-4 py-3 hover:underline cursor-pointer transition-colors duration-200">
         <i class="ri-logout-box-line text-xl text-gray-600 mr-3"></i>
         <button type="submit" class="text-sm text-gray-700">Sign Out</button>
-    </div>
-</form>  
+    </form>
+</div>  
 
 <div class="bg-white shadow-md w-full z-10 h-20 flex justify-between items-center px-11 fixed">
     <a href="/home/" class="cursor-pointer font-semibold">BLOG APPLICATION</a>

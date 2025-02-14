@@ -1,0 +1,74 @@
+{% extends 'navbar.html' %}
+{% block content %}
+
+
+<div id="profile-popup" class='fixed hidden inset-0 z-20 flex justify-center h-screen w-full'>
+    <form method="post" class='w-[25rem] h-full bg-lime-900 bg-opacity-60 p-2'>
+      <div class="flex justify-end">
+          <button type="button" class="text-gray-300 hover:text-gray-700 transition-colors" onclick="closeProfilePopup()">
+            <i class="ri-close-large-line text-lg"></i>
+          </button>
+      </div>
+      <div class='px-4 space-y-24'>
+          <h1 class='text-white font-semibold text-3xl pt-16'>Edit Profile</h1>
+          <div class='px-4 space-y-9'>
+            <div class='flex gap-6'>
+                <label class='text-white font-thin'>First Name</label>
+                <input name="first_name" value="{{user.first_name}}" type="text" class='bg-transparent border-b text-white focus:border-lime-400 outline-none px-3'/>
+            </div>
+            <div class='flex gap-6'>
+                <label class='text-white font-thin'>Last Name</label>
+                <input name="last_name" value="{{user.last_name}}" type="text" class='bg-transparent border-b text-white focus:border-lime-400 outline-none px-3'/>
+            </div>
+          </div>
+      </div>
+      <div class=' mt-24 text-center mx-6'>
+        <button type="submit" class='text-lg px-6 w-full text-white py-2 cursor-pointer hover:bg-lime-900 rounded-lg bg-lime-700' >Save Changes</button>
+      </div>
+    </form>
+  </div>
+
+<div class='h-screen bg-stone-100 pt-28'>
+    <div class='p-24 flex gap-4 items-center'>
+        <div class='bg-white w-36 h-36 rounded-full flex justify-center items-center'>
+            <input type="file" class='hidden' ref={inputRef} onChange={handleImg} />
+            {% if user.user_profile.profile_pic %}
+                <img src={{user.user_profile.profile_pic}} alt="" class='w-full h-full object-cover rounded-full' />
+                <div class='fixed text-3xl opacity-0 rounded-full w-36 flex items-center justify-center h-36 bg-black bg-opacity-50 text-white hover:opacity-100 transition-opacity duration-300 cursor-pointer'>
+                    
+                </div>
+            {% else %}
+            <div class='flex flex-col items-center cursor-pointer'>
+                <CiCamera class='text-4xl text-stone-700' />
+            </div>
+            {% endif %}
+        </div>
+        <div>
+            {% if user.user_profile.first_name %}
+                <h1 class='text-5xl'>{{user.user_profile.first_name}} {{user.user_profile.last_name}}</h1>
+            {% else %}
+                <h1 class='text-5xl'>No Profile</h1>
+            {% endif %}
+            
+            <p class='mt-1 text- underline pl-1 cursor-pointer hover:text-stone-700 font-semibold' onclick="openProfilePopup()">Edit Profile</p>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+
+<script>
+    function openProfilePopup(){
+        element = document.getElementById('profile-popup')
+        element.classList.remove('hidden')
+    }
+
+    function closeProfilePopup(){
+        element = document.getElementById('profile-popup')
+        element.classList.add('hidden')
+    }
+</script>
+
+{% endblock scripts %}

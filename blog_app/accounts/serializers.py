@@ -93,7 +93,7 @@ class BlogSerializer(ModelSerializer):
     created_at = DateTimeField(format="%b %d, %Y", read_only=True)
     class Meta:
         model = Blog
-        fields = ['id', 'user', 'heading', 'sub_heading', 'body', 'image', 'like_count', 'unlike_count', 'created_at', 'updated_at', 'user', 'comments', 'comments_count', 'is_liked', 'is_disliked', 'is_available']
+        fields = ['id', 'user', 'heading', 'sub_heading', 'body', 'image', 'like_count', 'unlike_count', 'created_at', 'updated_at', 'user', 'comments', 'comments_count', 'is_liked', 'is_disliked', 'is_available', 'is_active']
         read_only_fields = ['user', 'like_count', 'unlike_count', 'created_at', 'updated_at', 'image', 'comments',]
 
     def get_like_count(self, obj):

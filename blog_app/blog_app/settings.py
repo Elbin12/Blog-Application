@@ -56,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'accounts.middlewares.TokenRefreshMiddleware',
+    'accounts.middlewares.RedirectOn401Middleware',
 ]
 
 ROOT_URLCONF = 'blog_app.urls'

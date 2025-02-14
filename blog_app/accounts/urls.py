@@ -13,5 +13,6 @@ urlpatterns = [
     path('blog/create/', views.CreateBlog.as_view(), name='create-blog'),
     path('blog/edit/<int:id>/', views.EditBlog.as_view(), name='edit-blog'),
     path('logout/', views.Logout.as_view(), name='logout'),
+    path('profile/', views.ProfileView.as_view(), name='profile'),
 ]
     

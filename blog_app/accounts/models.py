@@ -64,6 +64,7 @@ class Blog(models.Model):
     image = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
     is_available = models.BooleanField(default=True)
 
 class Interactions(models.Model):
@@ -80,3 +81,4 @@ class Comments(models.Model):
     like_count = models.IntegerField(default=0)
     unlike_count = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)

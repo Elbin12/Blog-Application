@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.shortcuts import redirect
 
 class TokenRefreshMiddleware:
     def __init__(self, get_response):
@@ -16,4 +17,14 @@ class TokenRefreshMiddleware:
                 httponly = settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
                 samesite = settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
             )
+        return response
+    
+class RedirectOn401Middleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+    
+    def __call__(self, request):
+        response = self.get_response(request)
+        if response.status_code == 401:
+            return redirect('home')
         return response
