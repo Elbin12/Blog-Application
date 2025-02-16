@@ -1,18 +1,13 @@
 from django.shortcuts import render, redirect
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from accounts.models import CustomUser, Blog
-from rest_framework_simplejwt.tokens import RefreshToken
+from accounts.models import CustomUser, Blog, Comments
 from accounts.serializers import UserSerializer
-from rest_framework.generics import ListAPIView, RetrieveAPIView
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import permissions
 from django.contrib import messages
 from accounts.utils import token_generation_and_set_in_cookie
 from rest_framework.renderers import TemplateHTMLRenderer
-from .serializers import UserDetailsSerializer
-from accounts.serializers import BlogSerializer
-
+from .serializers import UserDetailsSerializer, BlogSerializer
 # Create your views here.
 
 
@@ -71,6 +66,7 @@ class UserDetail(APIView):
             messages.error(request, 'user not found')
             return redirect('admin-home')
         except Exception as e:
+            print(e, 'eeeeee')
             messages.error(request, 'Internal server error')
             return redirect('admin-home')
         
@@ -116,3 +112,17 @@ class BlogDetails(APIView):
             return redirect('admin-home')
         except Exception as e:
             return redirect('admin-home')
+        
+class BlockComment(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request, id):
+        try:
+            comment = Comments.objects.get(id=id)
+            comment.is_active = False if comment.is_active else True
+            comment.save()
+            messages.success(request, 'comment updated')
+            return redirect('blog_details', comment.blog.id)
+        except Comments.DoesNotExist:
+            messages.error(request, 'comment not found')
+            return redirect('blog_details', comment.blog.id)

@@ -50,13 +50,28 @@
                     {% for comment in blog.comments %}
                     <div class='space-y-6 py-4 px-9 '>
                         <div class='space-y-4'>
-                            <div class='flex gap-3'>
-                                <img src={{comment.user.user_profile.profile_pic}} alt=""
-                                    class='w-11 h-11 object-cover rounded-full' />
-                                <div>
-                                    <h1 class='font-semibold'>{{comment.user.user_profile.first_name}}
-                                        {{comment.user.user_profile.last_name}}</h1>
-                                    <p class='text-sm text-gray-500 '>{{comment.time_ago}}</p>
+                            <div class='flex justify-between relative'>
+                                <div class="flex gap-3">
+                                    <img src="{{ comment.user.user_profile.profile_pic }}" alt="" class='w-11 h-11 object-cover rounded-full' />
+                                    <div>
+                                        <h1 class='font-semibold'>{{ comment.user.user_profile.first_name }}
+                                            {{ comment.user.user_profile.last_name }}</h1>
+                                        <p class='text-sm text-gray-500'>{{ comment.time_ago }}</p>
+                                    </div>
+                                </div>
+                                <div class="relative">
+                                    <form method="post" action="{% url 'block-comment' comment.id %}">
+                                        {%csrf_token%}
+                                        <i class="ri-more-2-line cursor-pointer" onclick="togglePopup(event)" data-id="popup-{{ comment.id }}"></i>
+                                        <div id="popup-{{ comment.id }}" class="popup flex items-center gap-2 hidden absolute right-4 top-0 bg-white shadow-md rounded-md px-4 py-1">
+                                            <i class="ri-prohibited-2-line text-red-500"></i>
+                                            {% if comment.is_active %}
+                                                <button type="submit" class="cursor-buttonointer hover:bg-gray-100 text-red-500">Block</button>
+                                            {% else %}
+                                                <button type="submit" class="cursor-buttonointer hover:bg-gray-100 text-red-500">UnBlock</button>
+                                            {% endif %}
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                             <p class='font-medium px-14'>{{comment.comment}}</p>
@@ -73,5 +88,32 @@
 {% endblock content %}
 
 {% block scripts %}
+
+<script>
+    function togglePopup(event) {
+    event.stopPropagation(); // Prevents event bubbling
+    const popupId = event.target.getAttribute('data-id');
+    const popup = document.getElementById(popupId);
+
+    // Hide any other open popups
+    document.querySelectorAll('.popup').forEach(p => {
+        if (p.id !== popupId) {
+            p.classList.add('hidden');
+        }
+    });
+
+    // Toggle visibility
+    popup.classList.toggle('hidden');
+}
+
+// Close popup when clicking outside
+document.addEventListener('click', function (event) {
+    document.querySelectorAll('.popup').forEach(popup => {
+        if (!popup.contains(event.target)) {
+            popup.classList.add('hidden');
+        }
+    });
+});
+</script>
 
 {% endblock scripts %}

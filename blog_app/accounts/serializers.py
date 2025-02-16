@@ -75,7 +75,7 @@ class CommentsSerializer(ModelSerializer):
     time_ago = SerializerMethodField()
     class Meta:
         model = Comments
-        fields = ['id', 'comment', 'created_at', 'user', 'time_ago']
+        fields = ['id', 'comment', 'created_at', 'user', 'time_ago', 'is_active']
         read_only_fields = ['blog', 'user']
 
     def get_time_ago(self, obj):
@@ -84,7 +84,7 @@ class CommentsSerializer(ModelSerializer):
 class BlogSerializer(ModelSerializer):
     image = SerializerMethodField()
     user = UserSerializer(read_only=True)
-    comments = CommentsSerializer(source='blog_comment', many=True, read_only=True)
+    comments = SerializerMethodField()
     comments_count = SerializerMethodField()
     is_liked = SerializerMethodField()
     is_disliked = SerializerMethodField()
@@ -124,7 +124,11 @@ class BlogSerializer(ModelSerializer):
         return None
     
     def get_comments_count(self, obj):
-        return obj.blog_comment.count()
+        return obj.blog_comment.filter(is_active=True).count()
+    
+    def get_comments(self, obj):
+        comments = obj.blog_comment.filter(is_active=True)
+        return CommentsSerializer(comments, many=True).data
     
     def update(self, instance, validated_data):
         if 'image' in self.context['request'].FILES:

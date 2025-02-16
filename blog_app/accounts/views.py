@@ -56,7 +56,7 @@ class HomeView(APIView):
 
     def get(self, request):
         print( request.user, 'user____')
-        blogs = Blog.objects.filter(is_available=True)
+        blogs = Blog.objects.filter(is_available=True, is_active=True)
         serializer = BlogSerializer(blogs, many=True)
         return Response({'blogs':serializer.data})
 
