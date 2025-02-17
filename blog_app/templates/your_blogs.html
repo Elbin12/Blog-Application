@@ -3,6 +3,13 @@
     <div class="space-y-6">
         {% for blog in blogs %}
         <div class="flex flex-col relative w-3/4 border-b py-2">
+            {% if not blog.is_active %}
+                <h1 class="text-red-500 font-bold text-lg">Blocked by admin</h1>
+            {% elif not blog.is_available %}
+                <h1 class="text-amber-500 font-bold text-lg">Unlisted</h1>
+            {% else %}
+                <h1 class="text-green-500 font-bold text-lg">Listed</h1>
+            {% endif %}
             <div class="flex justify-end w-full cursor-pointer" onclick="togglePopup('{{ blog.id }}')">
                 <i class="ri-more-fill"></i>
             </div>
@@ -71,6 +78,23 @@
         </div>
         {% endfor %}
     </div>
+    {% if total_pages > 1 %}
+    <div class="flex justify-center mt-6">
+        <nav class="flex space-x-2">
+            {% if has_previous %}
+                <a href="?page={{ previous_page }}" class="px-4 py-2 border rounded-lg hover:bg-gray-200">Prev</a>
+            {% endif %}
+
+            <span class="px-4 py-2 border bg-gray-200 rounded-lg">
+                Page {{ page_number }} of {{ total_pages }}
+            </span>
+
+            {% if has_next %}
+                <a href="?page={{ next_page }}" class="px-4 py-2 border rounded-lg hover:bg-gray-200">Next</a>
+            {% endif %}
+        </nav>
+    </div>
+    {% endif %}
 </section>
 {% endblock content %}
 {% block scripts %}

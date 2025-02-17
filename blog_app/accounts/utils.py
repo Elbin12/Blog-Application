@@ -53,7 +53,7 @@ def token_generation_and_set_in_cookie(user):
     if user.is_superuser:
         response = HttpResponseRedirect('/admin/home/')
     else:
-        response = HttpResponseRedirect('/home/')
+        response = HttpResponseRedirect('/')
     response.set_cookie(
             key = settings.SIMPLE_JWT['AUTH_COOKIE'],
             value = str(refresh.access_token),

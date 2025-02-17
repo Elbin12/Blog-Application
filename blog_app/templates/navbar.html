@@ -67,7 +67,7 @@
 </div>  
 
 <div class="bg-white shadow-md w-full z-10 h-20 flex justify-between items-center px-11 fixed">
-    <a href="/home/" class="cursor-pointer font-semibold">BLOG APPLICATION</a>
+    <a href="/" class="cursor-pointer font-semibold">BLOG APPLICATION</a>
     <div class="flex gap-4 items-center">
         {% if is_authenticated %}
         <a href="/blogs/" class="font-semibold cursor-pointer hover:underline text-lg">Your Blogs</a>
@@ -95,10 +95,10 @@
                 body: new FormData(form),
             }).then(response => {
                 if (response.ok) {
-                    window.location.href = "/home/";
+                    window.location.href = "/";
                 }
             }).catch(error=> {
-                window.location.href = "/home/";
+                window.location.href = "/";
                 console.error("Logout failed:", error);
             })
         }

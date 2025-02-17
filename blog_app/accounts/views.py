@@ -14,6 +14,7 @@ import os
 from .utils import upload_fileobj_to_s3, token_generation_and_set_in_cookie
 from datetime import datetime
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 # Create your views here.
 
@@ -111,8 +112,19 @@ class BlogList(APIView):
 
     def get(self, request):
         blogs = Blog.objects.filter(user=request.user)
+        paginator = Paginator(blogs, 2)
+        page_number = request.GET.get('page')
+        blogs = paginator.get_page(page_number)
         serializer = BlogSerializer(blogs, many=True)
-        return Response({'blogs':serializer.data})
+        return Response({
+            'blogs': serializer.data,  
+            'page_number': blogs.number,
+            'has_previous': blogs.has_previous(),
+            'has_next': blogs.has_next(),
+            'previous_page': blogs.previous_page_number() if blogs.has_previous() else None,
+            'next_page': blogs.next_page_number() if blogs.has_next() else None,
+            'total_pages': paginator.num_pages
+        })
     
 class CreateBlog(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -144,7 +156,7 @@ class CreateBlog(APIView):
                 messages.error(request, "Image is required")
                 return redirect('create-blog')
 
-            serializer.save(user=request.user, image=image_path)
+            serializer.save(user=request.user, image=image_path, is_active=True, is_available=True  )
             messages.success(request, "Blog post created successfully!")
             return redirect('your_blogs')
         else:
