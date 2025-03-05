@@ -66,7 +66,7 @@ class UserSerializer(ModelSerializer):
 
     def get_user_profile(self, obj):
         user_profile = getattr(obj, 'user_profile', None)
-        return UserProfileSerializer(user_profile).data if user_profile else None
+        return UserProfileSerializer(user_profile).data if user_profile else {'profile_pic':'https://www.inforwaves.com/media/2021/04/dummy-profile-pic-300x300-1.png'}
 
 
 class CommentsSerializer(ModelSerializer):

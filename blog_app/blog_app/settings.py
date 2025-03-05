@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'blog.elbin.site']
+ALLOWED_HOSTS = ['localhost', 'blog.elbin.live']
 
 
 # Application definition
