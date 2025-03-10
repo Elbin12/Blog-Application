@@ -4,7 +4,6 @@ A full-stack blog application built using **Django** and **Django Templates**. T
 ## 🚀 Features  
 - 🔐 **User Authentication** (JWT-based login & registration)  
 - 📝 **CRUD Operations** for blogs (Create, Read, Update, Delete)  
-- 🏷️ **User Roles** (Admin, Author, Reader)  
 - 📸 **Image Uploads** (AWS S3 for media storage)  
 - 🌍 **Responsive UI** (Django templates & Tailwind CSS)  
 - 📊 **PostgreSQL Database** for scalable data management  
