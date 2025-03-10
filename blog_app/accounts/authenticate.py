@@ -31,7 +31,7 @@ class CustomAuthentication(JWTAuthentication):
             try:
                 print('hi')
                 print('vall')
-                new_access_token = str  (RefreshToken(refresh_token).access_token)
+                new_access_token = str(RefreshToken(refresh_token).access_token)
                 print(new_access_token, 'new')
                 validated_token = self.get_validated_token(new_access_token)
                 print('kk')
